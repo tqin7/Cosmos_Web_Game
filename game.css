@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300i|Press+Start+2P');
+
+h1 {
+	color: white;
+	font-size: 100px;
+	font-family: 'Press Start 2P', cursive; /* Lucida Grande*/
+
+}
+
+button {
+	background-color: rgb(0,0,128);
+	border: none;
+	color: white;
+	text-align: center;
+	font-family: 'Press Start 2P', cursive;
+	font-size: 20px;
+	padding: 15px 32px;
+
+}
+
+button:hover{
+	background-color: rgb(72,61,139);
+}
+
+p {
+	color: white;
+}
+
+#red { /* ID SELECTOR: Used to specify CSS for one specific element */
+
+	color: red;
+
+}
+
+.center {  /* CLASS SELECTOR: Used to speficy CSS for class attribute;  */
+	text-align: center;
+}
+
+
+p.large { /*specific html element w/class selector */
+
+	size: 20px;
+
+}
+
+#container {
+	margin-top: 100px;
+}
+
+body {
+	background-color: black;
+}
+
+canvas {
+	border: 2px dotted black;
+}
