@@ -1,12 +1,18 @@
 var my_canvas = document.getElementById('canvas');
 var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
+var mainMusic = document.getElementById("main_music"),
+	foodMusic = document.getElementById("food"), 
+	goMusic = document.getElementById("gameOver");
+
+
 console.log(my_div);
 
 function popup(){
 
 	//alert("Good Luck!");
 	//document.body.innerHTML = '';
+	mainMusic.play();
 	my_div.remove();
 	//console.log(document.getElementById("par").innerHTML);
 	my_canvas.style.visibility = 'visible';
