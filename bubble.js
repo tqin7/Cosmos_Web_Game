@@ -4,14 +4,19 @@ var ctx = canvas.getContext("2d");
 var userRadius = 10;
 var userX = (canvas.width-userRadius*2)/2;
 var userY = (canvas.height-userRadius*2)/2;
-var userSpeed = 6;
+var userSpeed = 4;
 var bubRadius = 12;
 var bubSpeed = 4;
+var bubStartPointX = 1;
+var bubStartPointY = 1;
 var bubbles = [];
+var horizontalSpeed = 1;
+var verticalSpeed = 1;
 var leftPressed = false;
 var rightPressed = false;
 var upPressed = false;
 var downPressed = false;
+var score = 0;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -69,7 +74,7 @@ function userMove() {
 }
 
 function addBubble(spdx, spdy){
-  bubbles.push({bubX:50, bubY:50, bubSpeedX:spdx, bubSpeedY:spdy});
+  bubbles.push({bubX: 50, bubY: 50, bubSpeedX:spdx, bubSpeedY:spdy});
 }
 
 function drawBubbles(){
@@ -94,8 +99,13 @@ function bubblesMove() {
   }
 }
 
-function changeBubSpeed(){
-  bubSpeed += 1;
+function changeBubxPosition(){
+  bubStartPointX = Math.random()*(canvas.width-1)+1;
+  if (Math.floor(bubStartPointX) % 2 == 0) {
+    bubStartPointY = 1;
+  } else {
+    bubStartPointY = canvas.height-1;
+  }
 }
 
 function draw(){
@@ -104,8 +114,19 @@ function draw(){
   drawBubbles();
   userMove();
   bubblesMove();
+  drawScore();
 }
 
-setInterval(addBubble, 200, 3, 3);
-//setInterval(changeBubSpeed, 600);
+function changeSpeed() {
+  horizontalSpeed = Math.random()*1.5 + 1;
+  verticalSpeed = Math.random()*1.5 + 1;
+}
+
+function drawScore() {
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: " +score, 20, 20);
+}
+
+setInterval(addBubble, 2000, horizontalSpeed, verticalSpeed);
 setInterval(draw, 7);
