@@ -1,4 +1,3 @@
-//Sharon sgrubner@illumina.com
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var userRadius = 10;
@@ -73,8 +72,8 @@ function userMove() {
   }
 }
 
-function addBubble(spdx, spdy){
-  bubbles.push({bubX: 50, bubY: 50, bubSpeedX:spdx, bubSpeedY:spdy});
+function addBubble(){
+  bubbles.push({bubX: 50, bubY: 50, bubSpeedX:horizontalSpeed, bubSpeedY:verticalSpeed});
 }
 
 function drawBubbles(){
@@ -128,5 +127,6 @@ function drawScore() {
   ctx.fillText("Score: " +score, 20, 20);
 }
 
-setInterval(addBubble, 2000, horizontalSpeed, verticalSpeed);
+setInterval(addBubble, 2000);
+setInterval(changeSpeed, 1999);
 setInterval(draw, 7);
