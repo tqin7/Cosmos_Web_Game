@@ -43,7 +43,7 @@ p.large { /*specific html element w/class selector */
 
 }
 
-#container {
+#hide {
 	margin-top: 100px;
 }
 
@@ -52,5 +52,5 @@ body {
 }
 
 canvas {
-	border: 2px dotted black;
+	border: 2px dotted white;
 }
