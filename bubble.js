@@ -326,6 +326,7 @@ function play() {
 		checkCollision();
 		drawBubbles();
 		bubblesMove();
+		drawBullets();
 		clickAction();
 
 		if(is_game_over){
