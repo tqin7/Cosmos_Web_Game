@@ -74,10 +74,9 @@ function play() {
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
 
-
-
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
+	document.addEventListener("mousemove", mouseMoveHandler, false);
 
 	function keyDownHandler(e) {
 	  if (e.keyCode == 37) {
@@ -106,6 +105,14 @@ function play() {
 	  else if (e.keyCode == 40) {
 	    downPressed = false;
 	  }
+	}
+	function mouseMoveHandler(e){
+		var cursorX = e.clientX;
+		var cursorY = e.clientY;
+		if (cursorX>0 && cursorX<canvas.width && cursorY>0 && cursorY<canvas.height) {
+			userX = cursorX-userRadius;
+			userY = cursorY-2*userRadius;
+		}
 	}
 
 
