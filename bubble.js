@@ -86,6 +86,7 @@ function play() {
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
 	document.addEventListener("click", clickHandler);
+	document.addEventListener("click", shoot, false);
 
 	function keyDownHandler(e) {
 	  if (e.keyCode == 37) {
@@ -200,7 +201,47 @@ function play() {
 		horizontalSpeed = Math.random()*1.5 + speed;
 	    verticalSpeed = Math.random()*1.5 + speed;
 	}
+	function shoot(e){
+		var cursorX = e.clientX;
+		var cursorY = e.clientY;
+		vec_x = e.clientX - userX;
+		vec_y = e.clientY - userY;
+		create_bullet(vec_x, vec_y, userX, userY);
+	}
 
+	function create_bullet(vec_x, vec_y, xStart, yStart) {
+		var hypotunuse = Math.sqrt(vec_x*vec_x + vec_y*vec_y);
+		var BSpdX = bullet_len*vec_x/hypotunuse;
+		var BSpdY = bullet_len*vec_y/hypotunuse;
+		bullets.push({xCor:xStart, yCor:yStart, xSpd:BSpdX, ySpd:BSpdY});
+	}
+
+	function drawBullets() {
+		for (var i=0, max=bullets.length;i<max;i++) {
+			ctx.beginPath();
+			ctx.strokeStyle="red";
+			ctx.lineWidth=bulletWidth;
+			bullets[i].xCor+=bullets[i].xSpd;
+			bullets[i].yCor+=bullets[i].ySpd
+			ctx.moveTo(bullets[i].xCor,bullets[i].yCor);
+			ctx.lineTo(bullets[i].xCor+bullets[i].xSpd, bullets[i].yCor+bullets[i].ySpd);
+			ctx.stroke();
+		}
+	}
+
+	function moveBullets(){
+		for (var i=0, max=bullets.length;i<max;i++) {
+			bl = bullets[i];
+			if (bl.xCor<0||bl.xCor>my_canvas.width||bl.yCor<0||bl.yCor>my_canvas.height) {
+				bullets.splice(i, 1);
+			}
+			else {
+				bl.xCor += bl.xSpd;
+				bl.yCor += bl.ySpd;
+			}
+		}
+	}
+	
 	function drawGameOver(){
     	ctx.beginPath();
 		ctx.fillStyle = "white";
@@ -223,12 +264,18 @@ function play() {
 	function checkCollision() {
 		for (var i=0, max=bubbles.length;i<max;i++) {
 			var bubble=bubbles[i];
-			if (userX>bubble.bubX-bubRadius && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
-				background.pause();
-				if (is_game_over == false){
-					gameover.play();
+			var bubLat = bubble.bubX;
+			var bubLon = bubble.bubY;
+			if (userX>bubLat-bubRadius-userRadius+1 && userX<bubLat+bubRadius+userRadius-1 && userY<bubLon+bubRadius+userRadius-1 && userY>bubLon-bubRadius-userRadius+1) {
+				alert("Good job Loser");
+				document.location.reload();
+			}
+			for (var b=0, bmax=bullets.length;b<bmax;b++) {
+				var blt = bullets[b];
+				if (blt.xCor>bubLat-bubRadius-bulletWidth && blt.xCor<bubLat+bubRadius+bulletWidth && blt.yCor<bubLon+bubRadius+bulletWidth && blt.yCor>bubLon-bubRadius-bulletWidth) {
+					bullets.splice(b, 1);
+					bubbles.splice(i, 1);
 				}
-				is_game_over = true;
 			}
 		}
 	}
@@ -293,9 +340,6 @@ function play() {
 	setInterval(draw, 5);
 	setInterval(addBubble, delay);
 	setInterval(changeSpeed, 1999);
-
-	var connect = document.getElementById("connect");
-	connect.textContent = "hello"
 
 	//game over
 	//audio
