@@ -5,7 +5,7 @@ console.log(my_div);
 var is_game_over = false;
 
 var back = new Image();
-back.src = "https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/pixelated_starfield_by_necro_skeletal-d3he891.png";
+back.src = "https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/ground.png";
 
 var background = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/mainmusic.mp3");
 var gameover = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/over.mp3");
