@@ -211,7 +211,7 @@ function play() {
 	function checkCollision() {
 		for (var i=0, max=bubbles.length;i<max;i++) {
 			var bubble=bubbles[i];
-			if (userX>bubble.bubX && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
+			if (userX>bubble.bubX-bubRadius && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
 				background.pause();
 				if (is_game_over == false){
 					gameover.play();
