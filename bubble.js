@@ -3,9 +3,9 @@ var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
 console.log(my_div);
 
-var background = new Audio("/Users/Carlo/Desktop/Game/background.mp3");
-var gameover = new Audio("/Users/Carlo/Desktop/Game/gameover.mp3");
-var laser = new Audio("/Users/Carlo/Desktop/Game/laser.mp3");
+var background = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/mainmusic.mp3");
+var gameover = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/over.mp3");
+var laser = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/laser.mp3");
 
 function popup(){
 
@@ -125,7 +125,7 @@ function play() {
 	function drawScore() {
 		ctx.font = "bold 20px Courier New";
 		ctx.fillStyle = "white";
-		ctx.fillText("Score: " + timer, canvas.width - 150, 40);
+		ctx.fillText("Score: " + score, canvas.width - 150, 40);
 	}
 
 	function drawUser() {
@@ -203,17 +203,19 @@ function play() {
 
 	function drawGameOver(){
     	ctx.beginPath();
+		ctx.fillStyle = "white";
+		ctx.fillRect(canvas.width/2 - 153, canvas.height/2 - 83, 306, 155);
 		ctx.fillStyle = "gray";
 		ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 80, 300, 150);
 		ctx.fillStyle = "black";
 		ctx.fillRect(canvas.width/2 - 72, canvas.height/2 + 10, 150,30);
 
-		ctx.font = "bold 40px Courier New";
+		ctx.font = "40px Courier New";
 		ctx.fillStyle = "white";
 		ctx.fillText("GAME OVER", canvas.width/2 - 110, canvas.height/2 - 20);
-		ctx.font = "bold 20px Arial";
-		ctx.fillStyle = "blue";
-		ctx.fillText("REPLAY", canvas.width/2 - 40, canvas.height/2 + 30);
+		ctx.font = "bold 20px Courier New";
+		ctx.fillStyle = "#00FFFF";
+		ctx.fillText("REPLAY", canvas.width/2 - 32, canvas.height/2 + 30);
 
 		ctx.closePath();
 	}
