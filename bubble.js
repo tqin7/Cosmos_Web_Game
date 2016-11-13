@@ -1,14 +1,17 @@
 var my_canvas = document.getElementById('canvas');
 var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
-var gameOver = document.getElementById('gameOverBar');
-var closeBtn = document.getElementById('barClose');
 console.log(my_div);
+
+var background = new Audio("/Users/Carlo/Desktop/Game/background.mp3");
+var gameover = new Audio("/Users/Carlo/Desktop/Game/gameover.mp3");
+var laser = new Audio("/Users/Carlo/Desktop/Game/laser.mp3");
 
 function popup(){
 
 	//alert("Good Luck!");
 	//document.body.innerHTML = '';
+	background.play();
 	my_div.remove();
 	//console.log(document.getElementById("par").innerHTML);
 	my_canvas.style.visibility = 'visible';
@@ -65,6 +68,7 @@ function play() {
 	var rightPressed = false;
 	var upPressed = false;
 	var downPressed = false;
+	var click = false;
 	var userSpeed = 4;
 	var bubRadius = 12;
 	var bubSpeed = 4;
@@ -73,16 +77,22 @@ function play() {
 	var bubbles = [];
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
+	var is_game_over = false;
+	var fix_error = true;
+	var delay = 5000;
+
+
 
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
-	document.addEventListener("mousemove", mouseMoveHandler, false);
+	document.addEventListener("click", clickHandler);
 
 	function keyDownHandler(e) {
 	  if (e.keyCode == 37) {
 	    leftPressed = true;
 	  }
-	  else if (e.keyCode == 39) {
+	  else if (e.keyCode
+	   == 39) {
 	    rightPressed = true;
 	  }
 	  else if (e.keyCode == 38) {
@@ -106,20 +116,16 @@ function play() {
 	    downPressed = false;
 	  }
 	}
-	function mouseMoveHandler(e){
-		var cursorX = e.clientX;
-		var cursorY = e.clientY;
-		if (cursorX>0 && cursorX<canvas.width && cursorY>0 && cursorY<canvas.height) {
-			userX = cursorX-userRadius;
-			userY = cursorY-2*userRadius;
-		}
+
+	function clickHandler() {
+		click = true;
 	}
 
 
 	function drawScore() {
 		ctx.font = "bold 20px Courier New";
 		ctx.fillStyle = "white";
-		ctx.fillText("Score: " + score, canvas.width - 130, 40);
+		ctx.fillText("Score: " + score, canvas.width - 150, 40);
 	}
 
 	function drawUser() {
@@ -185,38 +191,99 @@ function play() {
 	  verticalSpeed = Math.random()*1.5 + 1;
 	}
 
+	function drawGameOver(){
+    	ctx.beginPath();
+		ctx.fillStyle = "gray";
+		ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 80, 300, 150);
+		ctx.fillStyle = "black";
+		ctx.fillRect(canvas.width/2 - 72, canvas.height/2 + 10, 150,30);
+
+		ctx.font = "bold 40px Courier New";
+		ctx.fillStyle = "white";
+		ctx.fillText("GAME OVER", canvas.width/2 - 110, canvas.height/2 - 20);
+		ctx.font = "bold 20px Arial";
+		ctx.fillStyle = "blue";
+		ctx.fillText("REPLAY", canvas.width/2 - 40, canvas.height/2 + 30);
+
+		ctx.closePath();
+	}
+
 	function checkCollision() {
 		for (var i=0, max=bubbles.length;i<max;i++) {
 			var bubble=bubbles[i];
 			if (userX>bubble.bubX && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
-				alert("FUck you");
-				document.location.reload();
+				background.pause();
+				if (is_game_over == false){
+					gameover.play();
+				}
+				is_game_over = true;
 			}
 		}
 	}
 
+	function clickAction() {
+		if (click){
+			if (is_game_over && fix_error){
+				fix_error = false;
+				document.location.reload(true);
+			}else{
+				laser.play();
+				click = false;
+			}
+		}
+	}
+
+	function drawInstructions() {
+    	ctx.beginPath();
+
+		ctx.font = "bold 16px Arial";
+		ctx.fillStyle = "white";
+		ctx.fillText("You are the blue ball.", canvas.width/2 - 95, canvas.height/2 - 25);
+		ctx.fillText("Avoid white bubbles using", canvas.width/2 - 110, canvas.height/2 + 30);
+		ctx.fillText("your keyboard arrow keys.", canvas.width/2 - 110, canvas.height/2 + 50);
+		
+		//ctx.font = "bold 16px Trebuchet";
+		//ctx.fillStyle = "blue";
+		//ctx.fillText("Shoot by clicking at bubbles.", canvas.width/2 - 110, canvas.height/2 + 100);
+		//ctx.fillText("Win game by killing all bubbles.", canvas.width/2 - 110, canvas.height/2 + 120);
+
+		ctx.closePath();
+	}
+
 	function draw(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		if (timer < 1200){
+			drawInstructions();
+		}
 		drawUser();
-		userMove();
-		checkCollision();
 		drawScore();
+		checkCollision();
 		drawBubbles();
 		bubblesMove();
+		clickAction();
 
-		if (score > 10) {
-			clearInterval(addBubble);
+		if(is_game_over){
+			drawGameOver();
+		}else{
+			userMove();
 		}
+
 		timer += 1;
 		if(timer % 30 == 0){
 			score += 1;
 		}
-
+		
 	}
 
 	setInterval(draw, 5);
-	setInterval(addBubble, 2000);
+	setInterval(addBubble, delay);
 	setInterval(changeSpeed, 1999);
 
+	var connect = document.getElementById("connect");
+	connect.textContent = "hello"
 
+	//game over
+	//audio
+	//touch circumference
+	//shooting + new level
 }
