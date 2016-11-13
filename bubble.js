@@ -279,6 +279,7 @@ function play() {
 				if (blt.xCor>bubLat-bubRadius-bulletWidth && blt.xCor<bubLat+bubRadius+bulletWidth && blt.yCor<bubLon+bubRadius+bulletWidth && blt.yCor>bubLon-bubRadius-bulletWidth) {
 					bullets.splice(b, 1);
 					bubbles.splice(i, 1);
+					score += 5;
 				}
 			}
 		}
