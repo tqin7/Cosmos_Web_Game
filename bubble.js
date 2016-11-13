@@ -2,10 +2,15 @@ var my_canvas = document.getElementById('canvas');
 var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
 console.log(my_div);
+var is_game_over = false;
+
+var back = new Image();
+back.src = "https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/pixelated_starfield_by_necro_skeletal-d3he891.png";
 
 var background = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/mainmusic.mp3");
 var gameover = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/over.mp3");
 var laser = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/laser.mp3");
+//laser.volume = .5;
 
 function popup(){
 
@@ -34,6 +39,10 @@ function pageLoad(){
 }
 
 document.addEventListener('keydown', function(event) {
+    if (is_game_over){
+    	//fix_error = false;
+    	document.location.reload(true);
+    }
     if (event.keyCode == 13) {
         popup();
     }
@@ -54,14 +63,14 @@ function play() {
 	ctx.fillStyle = "green";
 	ctx.fill();*/
 
-	var x = canvas.width/2;
-	var y = canvas.height - 30;
+	var x = my_canvas.width/2;
+	var y = my_canvas.height - 30;
 	var dx = 2;
 	var dy = -2;
 	var ballRadius = 10
 	var userRadius = 10;
-	var userX = (canvas.width-userRadius*2)/2;
-	var userY = (canvas.height-userRadius*2)/2;
+	var userX = (my_canvas.width-userRadius*2)/2;
+	var userY = (my_canvas.height-userRadius*2)/2;
 	var timer = 0;
 	var score = 0;
 	var leftPressed = false;
@@ -77,20 +86,20 @@ function play() {
 	var bubbles = [];
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
-	var spacePressed = false;
-	var bullet_len = 5;
-	var bulletWidth = 7;
-	var bullets = [];
-	var is_game_over = false;
 	var fix_error = true;
 	var delay = 5000;
+	var scoreX = canvas.width - 150;
+	var scoreY = 40;
+	var bullets = [];
+	var bullet_len = 5;
+	var bulletWidth = 7;
 
 
 
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
 	document.addEventListener("click", clickHandler);
-	document.addEventListener("click", shoot, false);
+	document.addEventListener("click", shoot);
 
 	function keyDownHandler(e) {
 	  if (e.keyCode == 37) {
@@ -126,11 +135,49 @@ function play() {
 		click = true;
 	}
 
+	function shoot(e){
+		var cursorX = e.clientX;
+		var cursorY = e.clientY;
+		vec_x = e.clientX - userX;
+		vec_y = e.clientY - userY;
+		create_bullet(vec_x, vec_y, userX, userY);
+	}
 
+	function create_bullet(vec_x, vec_y, xStart, yStart) {
+		var hypotunuse = Math.sqrt(vec_x*vec_x + vec_y*vec_y);
+		var BSpdX = bullet_len*vec_x/hypotunuse;
+		var BSpdY = bullet_len*vec_y/hypotunuse;
+		bullets.push({xCor:xStart, yCor:yStart, xSpd:BSpdX, ySpd:BSpdY});
+	}
+
+	function drawBullets() {
+		for (var i=0, max=bullets.length;i<max;i++) {
+			ctx.beginPath();
+			ctx.strokeStyle="red";
+			ctx.lineWidth=bulletWidth;
+			moveBullets();
+			ctx.moveTo(bullets[i].xCor,bullets[i].yCor);
+			ctx.lineTo(bullets[i].xCor+bullets[i].xSpd, bullets[i].yCor+bullets[i].ySpd);
+			ctx.stroke();
+		}
+	}
+
+	function moveBullets(){
+		for (var i=0, max=bullets.length;i<max;i++) {
+			bl = bullets[i];
+			if (bl.xCor<0||bl.xCor>my_canvas.width||bl.yCor<0||bl.yCor>my_canvas.height) {
+				bullets.splice(i, 1);
+			}
+			else {
+				bl.xCor += bl.xSpd;
+				bl.yCor += bl.ySpd;
+			}
+		}
+	}
 	function drawScore() {
 		ctx.font = "bold 20px Courier New";
 		ctx.fillStyle = "white";
-		ctx.fillText("Score: " + score, canvas.width - 150, 40);
+		ctx.fillText("Score: " + score, scoreX, scoreY);
 	}
 
 	function drawUser() {
@@ -205,47 +252,7 @@ function play() {
 		horizontalSpeed = Math.random()*1.5 + speed;
 	    verticalSpeed = Math.random()*1.5 + speed;
 	}
-	function shoot(e){
-		var cursorX = e.clientX;
-		var cursorY = e.clientY;
-		vec_x = e.clientX - userX;
-		vec_y = e.clientY - userY;
-		create_bullet(vec_x, vec_y, userX, userY);
-	}
 
-	function create_bullet(vec_x, vec_y, xStart, yStart) {
-		var hypotunuse = Math.sqrt(vec_x*vec_x + vec_y*vec_y);
-		var BSpdX = bullet_len*vec_x/hypotunuse;
-		var BSpdY = bullet_len*vec_y/hypotunuse;
-		bullets.push({xCor:xStart, yCor:yStart, xSpd:BSpdX, ySpd:BSpdY});
-	}
-
-	function drawBullets() {
-		for (var i=0, max=bullets.length;i<max;i++) {
-			ctx.beginPath();
-			ctx.strokeStyle="red";
-			ctx.lineWidth=bulletWidth;
-			bullets[i].xCor+=bullets[i].xSpd;
-			bullets[i].yCor+=bullets[i].ySpd
-			ctx.moveTo(bullets[i].xCor,bullets[i].yCor);
-			ctx.lineTo(bullets[i].xCor+bullets[i].xSpd, bullets[i].yCor+bullets[i].ySpd);
-			ctx.stroke();
-		}
-	}
-
-	function moveBullets(){
-		for (var i=0, max=bullets.length;i<max;i++) {
-			bl = bullets[i];
-			if (bl.xCor<0||bl.xCor>my_canvas.width||bl.yCor<0||bl.yCor>my_canvas.height) {
-				bullets.splice(i, 1);
-			}
-			else {
-				bl.xCor += bl.xSpd;
-				bl.yCor += bl.ySpd;
-			}
-		}
-	}
-	
 	function drawGameOver(){
     	ctx.beginPath();
 		ctx.fillStyle = "white";
@@ -270,9 +277,12 @@ function play() {
 			var bubble=bubbles[i];
 			var bubLat = bubble.bubX;
 			var bubLon = bubble.bubY;
-			if (userX>bubLat-bubRadius-userRadius+1 && userX<bubLat+bubRadius+userRadius-1 && userY<bubLon+bubRadius+userRadius-1 && userY>bubLon-bubRadius-userRadius+1) {
-				alert("Good job Loser");
-				document.location.reload();
+			if (userX>bubble.bubX-bubRadius && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
+				background.pause();
+				if (is_game_over == false){
+					gameover.play();
+				}
+				is_game_over = true;
 			}
 			for (var b=0, bmax=bullets.length;b<bmax;b++) {
 				var blt = bullets[b];
@@ -281,7 +291,7 @@ function play() {
 					bubbles.splice(i, 1);
 					score += 5;
 				}
-			}
+			}	
 		}
 	}
 
@@ -316,6 +326,7 @@ function play() {
 
 	function draw(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(back,0,0);
 		if (timer < 1200){
 			drawInstructions();
 		}
@@ -326,12 +337,16 @@ function play() {
 		drawScore();
 		checkCollision();
 		drawBubbles();
-		bubblesMove();
 		drawBullets();
+		bubblesMove();
 		clickAction();
 
 		if(is_game_over){
 			drawGameOver();
+			if(scoreX > canvas.width/2 - 50){
+				scoreX -= 1
+				scoreY += .7
+			}
 		}else{
 			userMove();
 		}
@@ -347,8 +362,11 @@ function play() {
 	setInterval(addBubble, delay);
 	setInterval(changeSpeed, 1999);
 
+	var connect = document.getElementById("connect");
+	connect.textContent = "hello"
+
 	//game over
-	//audio
+	//tone down shooting sound
 	//touch circumference
 	//shooting + new level
 }
