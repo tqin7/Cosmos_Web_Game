@@ -1,8 +1,10 @@
 var my_canvas = document.getElementById('canvas');
 var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
-console.log(my_div);
 var is_game_over = false;
+var started = false;
+var begin = false;
+var i = 0;
 
 var back = new Image();
 back.src = "https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/ground.png";
@@ -12,16 +14,17 @@ var gameover = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-in
 var laser = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/laser.mp3");
 laser.volume = .1;
 
-function popup(){
+var width = window.innerWidth;
+var height = window.innerHeight;
 
-	//alert("Good Luck!");
-	//document.body.innerHTML = '';
+function popup(){
+	started = true;
+	begin = false;
 	background.play();
+
 	my_div.remove();
-	//console.log(document.getElementById("par").innerHTML);
+
 	my_canvas.style.visibility = 'visible';
-	var width = window.innerWidth;
-	var height = window.innerHeight;
 	my_canvas.height=height - 44;
 	my_canvas.width=width - 23;
 
@@ -30,19 +33,13 @@ function popup(){
 
 window.onload = function() {
 	my_canvas.style.visibility = 'hidden';
-	pageLoad();
-
-}
-
-function pageLoad(){
-	//alert("hi");
 }
 
 document.addEventListener('keydown', function(event) {
     if (is_game_over && event.keyCode == 13){
-    	document.location.reload(true);
-    }
-    if (event.keyCode == 13) {
+		document.location.reload(true);
+    }else if (event.keyCode == 13 && started == false) {
+    	i = 2;
         popup();
     }
 });
@@ -51,23 +48,14 @@ function play() {
 	//SETTING UP CANVAS
 	var ctx = my_canvas.getContext("2d");
 
-	//RECTANGLE
-	/*ctx.beginPath();
-	ctx.rect(my_canvas.width / 2 - 20, my_canvas.height / 2 - 20, 50, 20);
-	ctx.fillStyle = "blue";
-	ctx.fill();
-
-	//CIRCLE  arc(x, y, radius, start angle, end angle)
-	ctx.arc(100, 100, 50, 0, Math.PI*2);
-	ctx.fillStyle = "green";
-	ctx.fill();*/
-
-	var x = my_canvas.width/2;
-	var y = my_canvas.height - 30;
 	var dx = 2;
 	var dy = -2;
-	var ballRadius = 10
-	var userRadius = 10;
+	var userRadius = 13;
+	var bubRadius = 16;
+	if (width < 700 || height < 500){
+		 userRadius = 10;
+		 bubRadius = 11;
+	}
 	var userX = (my_canvas.width-userRadius*2)/2;
 	var userY = (my_canvas.height-userRadius*2)/2;
 	var timer = 0;
@@ -78,7 +66,6 @@ function play() {
 	var downPressed = false;
 	var click = false;
 	var userSpeed = 4;
-	var bubRadius = 12;
 	var bubSpeed = 4;
 	var bubStartPointX = 20;
 	var bubStartPointY = 20;
@@ -86,7 +73,8 @@ function play() {
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
 	var fix_error = true;
-	var delay = 5000;
+	var delay = 0;
+	var delay2 = 0;
 	var scoreX = canvas.width - 150;
 	var scoreY = 40;
 	var bullets = [];
@@ -95,12 +83,12 @@ function play() {
 	var move_back = true;
 	var backX = 0;
 	var backY = 0;
-
+	var sniper = false;
+	var win = false;
 
 
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
-	document.addEventListener("click", clickHandler);
 	document.addEventListener("click", shoot);
 
 	function keyDownHandler(e) {
@@ -132,16 +120,31 @@ function play() {
 	  }
 	}
 
-	function clickHandler() {
-		click = true;
-	}
 
 	function shoot(e){
+		i += 1;
+		click = true;
 		var cursorX = e.clientX;
 		var cursorY = e.clientY;
-		vec_x = e.clientX - userX;
-		vec_y = e.clientY - userY;
-		create_bullet(vec_x, vec_y, userX, userY);
+
+		//OPTIONS
+		if(begin == false && i > 1){
+			if(cursorX < canvas.width/2){
+				sniper = false;
+				delay = 5000;
+				delay2 = 10000;
+			}else{
+				sniper = true;
+				delay = 1000;
+				delay2 = 500;
+			}
+			begin = true;
+			setIntervals();
+		}else if(sniper){
+			vec_x = e.clientX - userX;
+			vec_y = e.clientY - userY;
+			create_bullet(vec_x, vec_y, userX, userY);
+		}
 	}
 
 	function create_bullet(vec_x, vec_y, xStart, yStart) {
@@ -205,7 +208,9 @@ function play() {
 	}
 
 	function addBubble(){
-	  bubbles.push({bubX: bubStartPointX, bubY: bubStartPointY, bubSpeedX:horizontalSpeed, bubSpeedY:verticalSpeed});
+	  if(score > 40){
+	  	bubbles.push({bubX: bubStartPointX, bubY: bubStartPointY, bubSpeedX:horizontalSpeed, bubSpeedY:verticalSpeed});
+	  }
 	}
 
 	function drawBubbles() {
@@ -242,13 +247,33 @@ function play() {
 		//math.random
 	}
 
+	function drawOptions(){
+		ctx.font = "40px Courier New";
+		ctx.fillStyle = "white";
+		ctx.fillText("OPTIONS", canvas.width/2 - 80, canvas.height/2 - 50);
+		ctx.font = "15px Courier New";
+		ctx.fillText("Click one:", canvas.width/2 - 40, canvas.height/2 - 35)
+		ctx.font = "10px Courier New";
+		ctx.fillText("Avoid white bubbles.", canvas.width/2 - 135, canvas.height/2 + 50)
+		ctx.fillText("Shoot AND avoid bubbles.", canvas.width/2 +40, canvas.height/2 +50)
+		ctx.font = "bold 20px Courier New";
+		ctx.fillStyle = "#00FFFF";
+		ctx.fillText("Runaway", canvas.width/2 - 100, canvas.height/2 + 30);
+		ctx.fillText("Sniper", canvas.width/2 + 40, canvas.height/2 + 30);
+	}
+
 	function changeSpeed(){
-		if (timer < 3000){
+		if (score < 100){
 			speed = .5
-		}else if (timer > 5000){
-			speed = .3
+		}else if (score > 300){
+			if (sniper){
+				speed = .3
+
+			}else{
+				speed = .3
+			}
 		}else{
-			speed = 1.5
+			speed = 1.2
 		}
 		horizontalSpeed = Math.random()*1.5 + speed;
 	    verticalSpeed = Math.random()*1.5 + speed;
@@ -261,14 +286,14 @@ function play() {
 		ctx.fillStyle = "gray";
 		ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 80, 300, 150);
 		ctx.fillStyle = "black";
-		ctx.fillRect(canvas.width/2 - 72, canvas.height/2 + 10, 150,30);
+		ctx.fillRect(canvas.width/2 - 90, canvas.height/2 + 10, 180,30);
 
 		ctx.font = "40px Courier New";
 		ctx.fillStyle = "white";
 		ctx.fillText("GAME OVER", canvas.width/2 - 110, canvas.height/2 - 20);
-		ctx.font = "bold 20px Courier New";
+		ctx.font = "bold 16px Courier New";
 		ctx.fillStyle = "#00FFFF";
-		ctx.fillText("REPLAY", canvas.width/2 - 32, canvas.height/2 + 30);
+		ctx.fillText("ENTER to RESTART", canvas.width/2 - 77, canvas.height/2 + 30);
 
 		ctx.closePath();
 	}
@@ -297,15 +322,8 @@ function play() {
 	}
 
 	function clickAction() {
-		if (click){
-			if (is_game_over && fix_error){
-				fix_error = false;
-				document.location.reload(true);
-			}else{
-				laser.play();
-				click = false;
-			}
-		}
+		laser.play();
+		click = false;
 	}
 
 	function backMove(){
@@ -329,43 +347,72 @@ function play() {
 
 		ctx.font = "bold 16px Arial";
 		ctx.fillStyle = "white";
-		ctx.fillText("You are the blue ball.", canvas.width/2 - 95, canvas.height/2 - 25);
+		ctx.fillText("You are the blue ball.", canvas.width/2 - 95, canvas.height/2 - 30);
 		ctx.fillText("Avoid white bubbles using", canvas.width/2 - 110, canvas.height/2 + 30);
 		ctx.fillText("your keyboard arrow keys.", canvas.width/2 - 110, canvas.height/2 + 50);
-		
-		//ctx.font = "bold 16px Trebuchet";
-		//ctx.fillStyle = "blue";
-		//ctx.fillText("Shoot by clicking at bubbles.", canvas.width/2 - 110, canvas.height/2 + 100);
-		//ctx.fillText("Win game by killing all bubbles.", canvas.width/2 - 110, canvas.height/2 + 120);
-
+		if (sniper){
+			ctx.font = "bold 20px Arial";
+			ctx.fillText("Click to shoot.", canvas.width/2 - 80, canvas.height/2 + 100);
+		}
 		ctx.closePath();
+	}
+
+	function drawWin(){
+		ctx.font = " 80px Courier New";
+		ctx.fillStyle = "#00BFFF";
+		ctx.fillText("You won!", canvas.width/2 - 190, canvas.height/2 - 30);
+		ctx.font = "bold 20px Courier New";
+		ctx.fillText("But keep playing if you can! ;)", canvas.width/2 - 190, canvas.height/2 + 30);		
 	}
 
 	function draw(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		backMove();
 		ctx.drawImage(back, backX, backY);
-		if (timer < 1200){
-			drawInstructions();
-		}
-		if (timer > 15000){
-			delay = 15000
-		}
-		drawUser();
-		drawScore();
-		checkCollision();
-		drawBubbles();
-		drawBullets();
-		bubblesMove();
-		clickAction();
 
-		if(is_game_over){
-			drawGameOver();
-			if(scoreX > canvas.width/2 - 50){
-				scoreX -= 1
+		if (begin == false){
+			drawOptions();
+		}
+
+		if (begin){
+			if (score < 55){
+				drawInstructions();
 			}
-		}else{
-			userMove();
+			if (score > 400){
+				delay = delay2;
+			}
+			if (score > 600){
+				win = true;
+				if(score < 640){
+					drawWin();
+				}
+				if(sniper == false){
+					delay = 20,000;
+				}else{
+					if(score < 650){
+						delay = 3000;
+					}else{
+						delay = 400;
+					}
+				}
+			}
+
+			drawUser();
+			drawScore();
+			checkCollision();
+			drawBubbles();
+			drawBullets();
+			bubblesMove();
+			clickAction();
+
+			if(is_game_over && win == false){
+				drawGameOver();
+				if(scoreX > canvas.width/2 - 50){
+					scoreX -= 1
+				}
+			}else if(is_game_over == false){
+				userMove();
+			}
 		}
 
 		timer += 1;
@@ -375,15 +422,11 @@ function play() {
 		
 	}
 
+	function setIntervals(){
+		setInterval(addBubble, delay);
+		setInterval(changeSpeed, 1999);
+		setInterval(changeBubxPosition, delay*2);
+		score = 0;
+	}
 	setInterval(draw, 5);
-	setInterval(addBubble, delay);
-	setInterval(changeSpeed, 1999);
-	setInterval(changeBubxPosition, delay*2);
-
-	var connect = document.getElementById("connect");
-	connect.textContent = "hello"
-
-	//MAKE IT SO DON'T REDO GAME WITH KEY PRESS
-	//touch circumference
-	//shooting + new level
 }
