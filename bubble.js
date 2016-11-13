@@ -93,7 +93,9 @@ function play() {
 	var bullets = [];
 	var bullet_len = 5;
 	var bulletWidth = 7;
-
+	var move_back = true;
+	var backX = 0;
+	var backY = 0;
 
 
 	document.addEventListener("keydown", keyDownHandler, false);
@@ -306,7 +308,23 @@ function play() {
 			}
 		}
 	}
-
+	
+	function backMove(){
+		if (move_back){
+			backX -= .05;
+			backY -= .05;
+			if(backX == - back.width - ){
+				move_back = false;
+			}
+		}else{
+			backX += .05;
+			backY += .05;
+			if(backX == 0){
+				move_back = true;
+			}
+		}
+	}
+	
 	function drawInstructions() {
     	ctx.beginPath();
 
@@ -326,7 +344,8 @@ function play() {
 
 	function draw(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.drawImage(back,0,0);
+		backMove();
+		ctx.drawImage(back, backX, backY);
 		if (timer < 1200){
 			drawInstructions();
 		}
