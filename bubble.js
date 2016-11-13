@@ -125,7 +125,7 @@ function play() {
 	function drawScore() {
 		ctx.font = "bold 20px Courier New";
 		ctx.fillStyle = "white";
-		ctx.fillText("Score: " + score, canvas.width - 150, 40);
+		ctx.fillText("Score: " + timer, canvas.width - 150, 40);
 	}
 
 	function drawUser() {
@@ -185,10 +185,20 @@ function play() {
 	    bubStartPointY = canvas.height-1;
 	  }
 	}*/
+	function changeBubRadius(){
+		//math.random
+	}
 
-	function changeSpeed() {
-	  horizontalSpeed = Math.random()*1.5 + 1;
-	  verticalSpeed = Math.random()*1.5 + 1;
+	function changeSpeed(){
+		if (timer < 3000){
+			speed = .5
+		}else if (timer > 5000){
+			speed = .3
+		}else{
+			speed = 1.5
+		}
+		horizontalSpeed = Math.random()*1.5 + speed;
+	    verticalSpeed = Math.random()*1.5 + speed;
 	}
 
 	function drawGameOver(){
@@ -255,6 +265,9 @@ function play() {
 		if (timer < 1200){
 			drawInstructions();
 		}
+		if (timer > 15000){
+			delay = 15000
+		}
 		drawUser();
 		drawScore();
 		checkCollision();
@@ -269,7 +282,7 @@ function play() {
 		}
 
 		timer += 1;
-		if(timer % 30 == 0){
+		if(timer % 30 == 0 && is_game_over == false){
 			score += 1;
 		}
 		
