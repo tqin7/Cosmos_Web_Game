@@ -1,18 +1,14 @@
 var my_canvas = document.getElementById('canvas');
 var my_div = document.getElementById('hide');
 var button = document.getElementById('play');
-var mainMusic = document.getElementById("main_music"),
-	foodMusic = document.getElementById("food"), 
-	goMusic = document.getElementById("gameOver");
-
-
+var gameOver = document.getElementById('gameOverBar');
+var closeBtn = document.getElementById('barClose');
 console.log(my_div);
 
 function popup(){
 
 	//alert("Good Luck!");
 	//document.body.innerHTML = '';
-	mainMusic.play();
 	my_div.remove();
 	//console.log(document.getElementById("par").innerHTML);
 	my_canvas.style.visibility = 'visible';
@@ -182,27 +178,38 @@ function play() {
 	  verticalSpeed = Math.random()*1.5 + 1;
 	}
 
+	function checkCollision() {
+		for (var i=0, max=bubbles.length;i<max;i++) {
+			var bubble=bubbles[i];
+			if (userX>bubble.bubX && userX<bubble.bubX+bubRadius && userY<bubble.bubY+bubRadius && userY>bubble.bubY-bubRadius) {
+				alert("FUck you");
+				document.location.reload();
+			}
+		}
+	}
+
 	function draw(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawUser();
 		userMove();
+		checkCollision();
 		drawScore();
 		drawBubbles();
 		bubblesMove();
 
+		if (score > 10) {
+			clearInterval(addBubble);
+		}
 		timer += 1;
 		if(timer % 30 == 0){
 			score += 1;
 		}
-		
+
 	}
 
 	setInterval(draw, 5);
 	setInterval(addBubble, 2000);
 	setInterval(changeSpeed, 1999);
-
-	var connect = document.getElementById("connect");
-	connect.textContent = "hello"
 
 
 }
