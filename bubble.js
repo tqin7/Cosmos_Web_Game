@@ -77,6 +77,10 @@ function play() {
 	var bubbles = [];
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
+	var spacePressed = false;
+	var bullet_len = 5;
+	var bulletWidth = 7;
+	var bullets = [];
 	var is_game_over = false;
 	var fix_error = true;
 	var delay = 5000;
