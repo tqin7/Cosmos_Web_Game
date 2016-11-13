@@ -10,7 +10,7 @@ back.src = "https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/maste
 var background = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/mainmusic.mp3");
 var gameover = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/over.mp3");
 var laser = new Audio("https://raw.githubusercontent.com/spockqin/Tac-Game-incomplete/master/laser.mp3");
-//laser.volume = .5;
+laser.volume = .1;
 
 function popup(){
 
@@ -22,8 +22,8 @@ function popup(){
 	my_canvas.style.visibility = 'visible';
 	var width = window.innerWidth;
 	var height = window.innerHeight;
-	my_canvas.height=height - 39;
-	my_canvas.width=width - 20;
+	my_canvas.height=height - 44;
+	my_canvas.width=width - 23;
 
 	play();
 }
@@ -39,8 +39,7 @@ function pageLoad(){
 }
 
 document.addEventListener('keydown', function(event) {
-    if (is_game_over){
-    	//fix_error = false;
+    if (is_game_over && event.keyCode == 13){
     	document.location.reload(true);
     }
     if (event.keyCode == 13) {
@@ -81,8 +80,8 @@ function play() {
 	var userSpeed = 4;
 	var bubRadius = 12;
 	var bubSpeed = 4;
-	var bubStartPointX = 1;
-	var bubStartPointY = 1;
+	var bubStartPointX = 20;
+	var bubStartPointY = 20;
 	var bubbles = [];
 	var horizontalSpeed = 1;
 	var verticalSpeed = 1;
@@ -96,6 +95,7 @@ function play() {
 	var move_back = true;
 	var backX = 0;
 	var backY = 0;
+
 
 
 	document.addEventListener("keydown", keyDownHandler, false);
@@ -206,7 +206,7 @@ function play() {
 	}
 
 	function addBubble(){
-	  bubbles.push({bubX: 50, bubY: 50, bubSpeedX:horizontalSpeed, bubSpeedY:verticalSpeed});
+	  bubbles.push({bubX: bubStartPointX, bubY: bubStartPointY, bubSpeedX:horizontalSpeed, bubSpeedY:verticalSpeed});
 	}
 
 	function drawBubbles() {
@@ -231,14 +231,14 @@ function play() {
 	  }
 	}
 
-	/*function changeBubxPosition(){
-	  bubStartPointX = Math.random()*(canvas.width-1)+1;
+	function changeBubxPosition(){
+	  bubStartPointX = Math.random()*canvas.width;
 	  if (Math.floor(bubStartPointX) % 2 == 0) {
-	    bubStartPointY = 1;
+	    bubStartPointY = bubRadius;
 	  } else {
-	    bubStartPointY = canvas.height-1;
+	    bubStartPointY = canvas.height-bubRadius;
 	  }
-	}*/
+	}
 	function changeBubRadius(){
 		//math.random
 	}
@@ -308,23 +308,23 @@ function play() {
 			}
 		}
 	}
-	
+
 	function backMove(){
 		if (move_back){
 			backX -= .05;
 			backY -= .05;
-			if(backX == - back.width - ){
+			if(backX <= -300){
 				move_back = false;
 			}
 		}else{
 			backX += .05;
 			backY += .05;
-			if(backX == 0){
+			if(backX >= 0){
 				move_back = true;
 			}
 		}
 	}
-	
+
 	function drawInstructions() {
     	ctx.beginPath();
 
@@ -364,7 +364,6 @@ function play() {
 			drawGameOver();
 			if(scoreX > canvas.width/2 - 50){
 				scoreX -= 1
-				scoreY += .7
 			}
 		}else{
 			userMove();
@@ -380,12 +379,12 @@ function play() {
 	setInterval(draw, 5);
 	setInterval(addBubble, delay);
 	setInterval(changeSpeed, 1999);
+	setInterval(changeBubxPosition, delay*2);
 
 	var connect = document.getElementById("connect");
 	connect.textContent = "hello"
 
-	//game over
-	//tone down shooting sound
+	//MAKE IT SO DON'T REDO GAME WITH KEY PRESS
 	//touch circumference
 	//shooting + new level
 }
